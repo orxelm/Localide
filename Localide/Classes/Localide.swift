@@ -18,14 +18,19 @@ internal protocol UIApplicationProtocol {
 
 extension UIApplication: UIApplicationProtocol {}
 
-public final class Localide {
+public final class Localide: NSObject {
 
     public static let sharedManager: Localide = Localide()
-    internal var applicationProtocol: UIApplicationProtocol = UIApplication.shared
+    
+    public var actionSheetTitleText: String?
+    public var actionSheetMesaageText: String?
+    public var actionSheetDismissText: String?
+    
+    var applicationProtocol: UIApplicationProtocol = UIApplication.shared
 
     // Unavailable initializer, use sharedManager.
-    fileprivate init() {
-
+    fileprivate override init() {
+        super.init()
     }
 
     /**
@@ -74,7 +79,7 @@ public final class Localide {
             return
         }
 
-        self.discoverUserPreferenceOfMapApps("Navigation", message: "Which app would you like to use for directions?", apps: appChoices) { app in
+        self.discoverUserPreferenceOfMapApps(withTitle: self.actionSheetTitleText ?? "Navigation", message: self.actionSheetMesaageText ?? "Which app would you like to use for directions?", apps: appChoices) { app in
             if remember {
                 UserDefaults.setPreferredMapApp(app, fromMapAppChoices: appChoices)
             }
@@ -97,7 +102,7 @@ extension Localide {
         completion?(app, fromMemory, didLaunchMapApp)
     }
 
-    fileprivate func discoverUserPreferenceOfMapApps(_ title: String, message: String, apps: [LocalideMapApp], completion: @escaping (LocalideMapApp) -> Void) {
+    fileprivate func discoverUserPreferenceOfMapApps(withTitle title: String, message: String, apps: [LocalideMapApp], completion: @escaping (LocalideMapApp) -> Void) {
         guard apps.count > 1 else {
             if let app = apps.first {
                 completion(app)
@@ -105,15 +110,15 @@ extension Localide {
             return
         }
 
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
 
         for app in apps {
-            let alertAction = UIAlertAction.localideAction(withTitle: app.appName, style: UIAlertActionStyle.default, handler: { _ in completion(app) })
+            let alertAction = UIAlertAction.localideAction(withTitle: app.appName, style: .default, handler: { _ in completion(app) })
             alertAction.mockMapApp = app
             alertController.addAction(alertAction)
         }
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: self.actionSheetDismissText ?? "Cancel", style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
 
         UIApplication.topViewController()?.present(alertController, animated: true, completion: nil)
