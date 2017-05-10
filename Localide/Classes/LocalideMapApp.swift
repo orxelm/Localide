@@ -37,7 +37,7 @@ import CoreLocation
         }
     }
 
-    internal static let AllMapApps: [LocalideMapApp] = [appleMaps, citymapper, googleMaps, navigon, transitApp, waze, yandexNavigator]
+    static let AllMapApps: [LocalideMapApp] = [appleMaps, citymapper, googleMaps, navigon, transitApp, waze, yandexNavigator]
 }
 
 // MARK: - Public Helpers

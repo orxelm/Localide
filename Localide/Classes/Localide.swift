@@ -26,6 +26,8 @@ public final class Localide: NSObject {
     public var actionSheetMesaageText: String?
     public var actionSheetDismissText: String?
     
+    public var subsetOfApps: [LocalideMapApp]?
+    
     var applicationProtocol: UIApplicationProtocol = UIApplication.shared
 
     // Unavailable initializer, use sharedManager.
@@ -63,11 +65,11 @@ public final class Localide: NSObject {
      - parameter usingASubsetOfApps: Handpicked subset of apps to use, use this parameter if you'd like to exclude some apps. (note: If none of which are available, Apple Maps will be fell back on.)
      - parameter completion: Called after attempting to launch app whether it being from previous preference or currently selected preference.
      */
-    public func promptForDirections(toLocation location: CLLocationCoordinate2D, rememberPreference remember: Bool = false, usingASubsetOfApps apps: [LocalideMapApp]? = nil, onCompletion completion: LocalideUsageCompletion?) {
+    public func promptForDirections(toLocation location: CLLocationCoordinate2D, rememberPreference remember: Bool = false, onCompletion completion: LocalideUsageCompletion?) {
         
         var appChoices = self.availableMapApps
-        if let apps = apps {
-            appChoices = apps.filter({ self.availableMapApps.contains($0) })
+        if let subsetOfApps = self.subsetOfApps {
+            appChoices = subsetOfApps.filter({ self.availableMapApps.contains($0) })
             if appChoices.count == 0 {
                 appChoices = [.appleMaps]
             }
