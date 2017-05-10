@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-public enum LocalideMapApp: Int {
+@objc public enum LocalideMapApp: Int {
     case appleMaps = 10
     case citymapper = 20
     case googleMaps = 30
